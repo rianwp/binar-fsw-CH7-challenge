@@ -6,7 +6,7 @@ dotenv.config();
 describe("API Login", () => {
   it("success login", async () => {
     const user = {
-      email: "fikri@binar.co.id",
+      email: "jordad@binar.co.id",
       password: "123456",
     };
     const response = await request(app).post("/v1/auth/login").send(user);
@@ -36,8 +36,9 @@ describe("API Register", () => {
   it("success register", async () => {
     const user = {
       name: "jordi",
-      email: "jordi@binar.co.id",
+      email: "jordadas@binar.co.id",
       password: "123456",
+      roleId: 2,
     };
     const response = await request(app).post("/v1/auth/register").send(user);
     expect(response.statusCode).toBe(201);
