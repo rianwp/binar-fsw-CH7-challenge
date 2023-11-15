@@ -1,7 +1,19 @@
 const request = require("supertest");
 const app = require("../app");
 const dotenv = require("dotenv");
+const supertest = require("supertest");
 dotenv.config();
+
+let token = "";
+
+beforeAll(async () => {
+  const user = {
+    email: "jordi@binar.co.id",
+    password: "123456",
+  };
+  const response = await supertest(app).post("/v1/auth/login").send(user);
+  token = response.body.accessToken;
+});
 
 describe("API Login", () => {
   it("success login", async () => {
@@ -36,7 +48,7 @@ describe("API Register", () => {
   it("success register", async () => {
     const user = {
       name: "jordi",
-      email: "jordadas@binar.co.id",
+      email: "jordi6@binar.co.id",
       password: "123456",
       roleId: 2,
     };
@@ -54,5 +66,14 @@ describe("API Register", () => {
       .post("/v1/auth/register")
       .send(failedUser);
     expect(response.statusCode).toBe(422);
+  });
+});
+
+describe("API Get User", () => {
+  it("success get user", async () => {
+    const response = await request(app)
+      .get("/v1/auth/whoami")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.statusCode).toBe(200);
   });
 });
