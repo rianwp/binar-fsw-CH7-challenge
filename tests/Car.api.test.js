@@ -153,3 +153,17 @@ describe("API rent car", () => {
 		expect(response.statusCode).toBe(201)
 	})
 })
+
+describe("random url", () => {
+	it("page not found", async () => {
+		const response = await request(app).get("/v1/engine")
+		expect(response.statusCode).toBe(404)
+	})
+})
+
+describe("root url", () => {
+	it("page not found", async () => {
+		const response = await request(app).get("/")
+		expect(response.statusCode).toBe(200)
+	})
+})
