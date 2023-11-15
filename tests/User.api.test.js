@@ -48,7 +48,7 @@ describe("API Register", () => {
   it("success register", async () => {
     const user = {
       name: "jordi",
-      email: "jordi6@binar.co.id",
+      email: "jordi7@binar.co.id",
       password: "123456",
       roleId: 2,
     };
@@ -75,5 +75,12 @@ describe("API Get User", () => {
       .get("/v1/auth/whoami")
       .set("Authorization", `Bearer ${token}`);
     expect(response.statusCode).toBe(200);
+  });
+
+  it("failed get user", async () => {
+    const response = await request(app)
+      .get("/v1/auth/whoami")
+      .set("Authorization", "Bearer abcdefg");
+    expect(response.statusCode).toBe(401);
   });
 });
