@@ -6,6 +6,7 @@ const {
   WrongPasswordError,
 } = require("../errors");
 const { JWT_SIGNATURE_KEY } = require("../../config/application");
+const EmailAlreadyTakenError = require("../errors/EmailAlreadyTakenError");
 
 class AuthenticationController extends ApplicationController {
   constructor({ userModel, roleModel, bcrypt, jwt }) {
