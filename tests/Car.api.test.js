@@ -1,8 +1,9 @@
-const request = require("supertest");
-const app = require("../app");
+const request = require("supertest")
+const app = require("../app")
 // const baseURL = "http://localhost:8000"
-const dotenv = require("dotenv");
-dotenv.config();
+const dotenv = require("dotenv")
+const supertest = require("supertest")
+dotenv.config()
 
 // describe("Dog", () => {
 //     it("should have name called 'Arnold'", () => {
@@ -25,26 +26,40 @@ dotenv.config();
 //     });
 // });
 
-describe("API get all cars", () => {
-  it("success get all data cars", async () => {
-    const response = await request(app).get("/v1/cars");
-    expect(response.statusCode).toBe(200);
-  });
-});
+let token = ""
+let tokenAdmin = ""
+
+beforeAll(async () => {
+  const user = {
+    email: "jordi@binar.co.id",
+    password: "123456"
+  }
+  const response = await supertest(app).post("/v1/auth/login").send(user)
+  token = response.body.accessToken
+})
+
+beforeAll(async () => {
+  const user = {
+    email: "imam@binar.co.id",
+    password: "123456"
+  }
+  const response = await supertest(app).post("/v1/auth/login").send(user)
+  tokenAdmin = response.body.accessToken
+})
 
 describe("API get all cars", () => {
-  it("gagal get all data cars", async () => {
-    const response = await request(app).get("/v1/cars");
-    expect(response.statusCode).toBe(404);
-  });
-});
+  it("success get all data cars", async () => {
+    const response = await request(app).get("/v1/cars")
+    expect(response.statusCode).toBe(200)
+  })
+})
 
 describe("API get car By ID", () => {
   it("success get data car", async () => {
-    const response = await request(app).get("/v1/cars/20");
-    expect(response.statusCode).toBe(200);
-  });
-});
+    const response = await request(app).get("/v1/cars/1")
+    expect(response.statusCode).toBe(200)
+  })
+})
 
 describe("API create car", () => {
   it("success create  car", async () => {
@@ -53,9 +68,67 @@ describe("API create car", () => {
       price: 1,
       size: "l",
       image: "dadadad",
-      isCurrentlyRented: false,
-    };
-    const response = await request(app).post("/v1/cars").send(car);
-    expect(response.statusCode).toBe(201);
-  });
-});
+      isCurrentlyRented: false
+    }
+
+    const response = await request(app)
+      .post("/v1/cars")
+      .send(car)
+      .set("Authorization", `Bearer ${tokenAdmin}`)
+    expect(response.statusCode).toBe(201)
+  })
+  it("failed create  car", async () => {
+    const car = {
+      name: "test",
+      price: 1,
+      size: "l",
+      image: "dadadad",
+      isCurrentlyRented: false
+    }
+
+    const response = await request(app)
+      .post("/v1/cars")
+      .send(car)
+      .set("Authorization", `Bearer ${token}`)
+    expect(response.statusCode).toBe(401)
+  })
+})
+
+describe("API update car", () => {
+  it("success update  car", async () => {
+    const response = await request(app)
+      .put("/v1/cars/3")
+      .send({
+        name: "updatetest",
+        price: 182,
+        size: "l",
+        image: "frepalestine"
+      })
+      .set("Authorization", `Bearer ${tokenAdmin}`)
+    expect(response.statusCode).toBe(200)
+  })
+  it("failed update car", async () => {
+    const car = {
+      name: "test",
+      price: 1,
+      size: "l",
+      image: "dadadad",
+      isCurrentlyRented: false
+    }
+
+    const response = await request(app)
+      .put("/v1/cars/193")
+      .send(car)
+      .set("Authorization", `Bearer ${token}`)
+    expect(response.statusCode).toBe(401)
+  })
+})
+
+describe("API delete car", () => {
+  it("success delete car", async () => {
+    const response = await request(app)
+      .delete("/v1/cars/9")
+      .set("Authorization", `Bearer ${tokenAdmin}`)
+    expect(response.statusCode).toBe(204)
+  })
+})
